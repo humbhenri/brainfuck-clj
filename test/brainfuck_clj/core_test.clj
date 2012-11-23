@@ -10,3 +10,17 @@
 (fact "Print Hello World!"
   (.trim (with-out-str (bf "++++++++[>++++[>++>+++>+++>+<<<<-]>+>->+>>+[<]<-]>>.>
 >---.+++++++..+++.>.<<-.>.+++.------.--------.>+.>++."))) => "Hello World!")
+
+(fact "Test [ and ]"
+  (let [program ">++++[>++++++<-]>-[[<+++++>>+<-]>-]<<[<]>>>>-
+-.<<<-.>>>-.<.<.>---.<<+++.>>>++.<<---.[>]<<."]
+    (find-end-loop 5 program) => 15
+    (find-end-loop 18 program) => 34
+    (find-end-loop 19 program) => 31
+    (find-end-loop 37 program) => 39
+    (find-end-loop 85 program) => 87
+    (find-start-loop 15 program) => 5
+    (find-start-loop 34 program) => 18
+    (find-start-loop 31 program) => 19
+    (find-start-loop 39 program) => 37
+    (find-start-loop 87 program) => 85))
