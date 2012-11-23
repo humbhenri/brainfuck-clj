@@ -2,7 +2,7 @@
 
 (def cells-size 30000)
 
-(def cells (atom (byte-array cells-size (byte 0))))
+(def cells (atom (short-array cells-size (short 0))))
 
 ;;; data pointer
 (def pointer (atom 0))
@@ -17,10 +17,10 @@
   (aget @cells @pointer))
 
 (defn inc-cell-value []
-  (aset-byte @cells @pointer (inc (read-cell))))
+  (aset-short @cells @pointer (inc (read-cell))))
 
 (defn dec-cell-value []
-  (aset-byte @cells @pointer (dec (read-cell))))
+  (aset-short @cells @pointer (dec (read-cell))))
 
 (defn move-pointer-right []
   (when (< @pointer cells-size)
@@ -74,8 +74,7 @@
       (reset! pc matching))))
 
 (defn write-ascii []
-  (print (char (read-cell)))
-  (flush))
+  (print (char (read-cell))))
 
 (defn read-ascii [] ())
 
