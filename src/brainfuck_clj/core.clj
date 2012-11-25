@@ -16,11 +16,20 @@
 (defn read-cell []
   (aget @cells @pointer))
 
+(defn write-cell [^Short value]
+  (aset-short @cells @pointer value))
+
+(defn write-ascii []
+  (print (char (read-cell))))
+
+(defn read-ascii []
+  (write-cell (Short/valueOf (read-line))))
+
 (defn inc-cell-value []
-  (aset-short @cells @pointer (inc (read-cell))))
+  (write-cell (inc (read-cell))))
 
 (defn dec-cell-value []
-  (aset-short @cells @pointer (dec (read-cell))))
+  (write-cell (dec (read-cell))))
 
 (defn move-pointer-right []
   (when (< @pointer cells-size)
@@ -46,6 +55,8 @@
              (inc counter))
       (dec counter))))
 
+(def find-end-loop-memoized (memoize find-end-loop))
+
 (defn find-start-loop
   "Find position of matching [ assuming the char under pos is ]"
   [pos program]
@@ -59,24 +70,21 @@
              (dec counter))
       (inc counter))))
 
+(def find-start-loop-memoized (memoize find-start-loop))
+
 (defn start-loop
   "Jump past the matching ] if the cell under pointer is 0"
   [program]
-  (let [matching (find-end-loop @pc program)]
+  (let [matching (find-end-loop-memoized @pc program)]
     (when (cell-is-zero?)
       (reset! pc (inc matching)))))
 
 (defn end-loop
   "Jump back to the matching [ if the cell under the pointer is nonzero "
   [program]
-  (let [matching (find-start-loop @pc program)]
+  (let [matching (find-start-loop-memoized @pc program)]
     (when-not (cell-is-zero?)
       (reset! pc matching))))
-
-(defn write-ascii []
-  (print (char (read-cell))))
-
-(defn read-ascii [] ())
 
 (defn bf
   "Run brainfuck program text passed as argument"
