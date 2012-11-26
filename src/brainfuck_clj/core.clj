@@ -1,8 +1,11 @@
-(ns brainfuck-clj.core)
+(ns brainfuck-clj.core
+  (:gen-class))
 
 (def cells-size 30000)
 
 (def cells (atom (short-array cells-size (short 0))))
+
+(defn reset-cells! [] (reset! cells (short-array cells-size (short 0))))
 
 ;;; data pointer
 (def pointer (atom 0))
@@ -91,6 +94,7 @@
   [program]
   (reset! pc 0)
   (reset! pointer 0)
+  (reset-cells!)
   (let [statements (.replaceAll program "[^+-><\\[\\].,]" "")
         end (dec (.length statements))]
     ;; (add-watch pc "pc" (fn [k r o n]
@@ -109,3 +113,14 @@
       (when (< @pc end)
         (forward)
         (recur (.charAt statements @pc))))))
+
+(def user-message "Welcome to Brainfuck Interpreter (R) 2012\n Enter a program and press enter, exit or quit
+to leave.")
+
+(defn -main [& args]
+  (println user-message)
+  (loop [input (.trim (read-line))]
+    (when (or (not= input "exit") (not= input "quit"))
+      (bf input)
+      (println)
+      (recur (.trim (read-line))))))
